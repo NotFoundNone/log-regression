@@ -21,10 +21,20 @@ def gradient_descent(X, y, theta, alpha, num_iter):
     Выполняет градиентный спуск для минимизации функции стоимости.
     """
     m = len(y)
-    for _ in range(num_iter):
-        gradient = (1/m) * (X.T @ (sigmoid(X @ theta) - y))
+    cost_history = []
+
+    for i in range(num_iter):
+        gradient = (1 / m) * (X.T @ (sigmoid(X @ theta) - y))
         theta -= alpha * gradient
-    return theta
+        cost = compute_cost(X, y, theta)
+        cost_history.append(cost)
+
+        # Прерывание при обнаружении числовой нестабильности
+        if np.isnan(cost) or np.isinf(cost):
+            print(f"Прерывание: alpha={alpha}, итерация={i}")
+            return theta, cost_history
+
+    return theta, cost_history
 
 def predict(X, theta):
     """
